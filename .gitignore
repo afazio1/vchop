@@ -1,4 +1,3 @@
 .DS_Store
-output.mp4
-*.mov
+test/
 vchop
