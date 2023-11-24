@@ -1,3 +1,4 @@
 .DS_Store
-*.mp4
+output.mp4
 *.mov
+vchop

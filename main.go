@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"flag"
 	"fmt"
 	"os"
 	"os/exec"
@@ -10,29 +11,50 @@ import (
 )
 func check(e error) {
 	if e != nil {
+		fmt.Println(e.Error())
 		panic(e)
 	}
 }
 func main() {
-	cmd := exec.Command("ffmpeg", "-i", "silence-test.mov", "-af", "silencedetect=noise=-25dB", "-f", "null", "-")
+	// init flags
+	var input string
+	flag.StringVar(&input, "input", "", "the video file you want to chop")
+	var d float64
+	flag.Float64Var(&d, "dur", 2, "silence duration until notification")
+	var noise int
+	flag.IntVar(&noise, "noise", -30, "volume threshold for silence in dB")
+	var output string
+	flag.StringVar(&output, "output", "output.mp4", "the file to output to")
+
+	flag.Parse()
+
+	// fmt.Println("input:", input)
+	// fmt.Println("duration:", d)
+	// fmt.Println("noise:", noise)
+	// fmt.Println("output:", output)
+	
+	cmd := exec.Command("ffmpeg", "-i", input, "-af", fmt.Sprintf("silencedetect=noise=%ddB:d=%f", noise, d), "-f", "null", "-")
 	cmd.Dir = ""
 
 	var out bytes.Buffer
 	cmd.Stderr = &out
 
 	err := cmd.Run()
-	check(err)
+	if err != nil {
+		fmt.Println(out.String())
+		return
+	}
 	outStr := out.String()
 	startTimes, endTimes, duration := parseOutput(outStr)
 	
-	command := constructCmd(&startTimes, &endTimes, duration)
+	command := constructCmd(&startTimes, &endTimes, duration, input, output)
 
 	chopCmd := exec.Command(command[0], command[1:]...)
 	chopCmd.Dir = ""
 	chopCmd.Stdout = os.Stderr
 	chopCmd.Stderr = os.Stderr
 	chopErr := chopCmd.Run()
-	check(chopErr)	
+	check(chopErr)
 
 }
 
@@ -67,10 +89,10 @@ func parseOutput(out string) ([]float64, []float64, float64) {
 	return startTimes, endTimes, totalSec
 }
 
-func constructCmd(startTimes *[]float64, endTimes *[]float64, duration float64) []string {
+func constructCmd(startTimes *[]float64, endTimes *[]float64, duration float64, inFile string, outFile string) []string {
 	command := make([]string, 0)
 
-	command = append(command,"ffmpeg", "-y", "-i", "silence-test.mov", "-vf")
+	command = append(command,"ffmpeg", "-y", "-i", inFile, "-vf")
 
 	var timeStamp float64
 	timeStamp = 0
@@ -94,7 +116,7 @@ func constructCmd(startTimes *[]float64, endTimes *[]float64, duration float64) 
 		}
 		timeStamp = (*endTimes)[i]
 	}
-	command = append(command, vf, "-af", af, "output.mp4")
+	command = append(command, vf, "-af", af, outFile)
 
 	return command
 }
