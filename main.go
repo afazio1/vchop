@@ -37,11 +37,15 @@ func main() {
 	cmd.Dir = ""
 
 	var out bytes.Buffer
+
 	cmd.Stderr = &out
 
 	err := cmd.Run()
 	if err != nil {
-		fmt.Println(out.String())
+		sOut := strings.Split(out.String(), "\n")
+		eMessage := sOut[len(sOut) - 2]
+		// fmt.Printf("\033[0;31m %s\n", eMessage)
+		fmt.Printf("%s\033[0;0;31m %s\n", out.String()[:len(out.String()) - len(eMessage) - 1], eMessage)
 		return
 	}
 	outStr := out.String()
