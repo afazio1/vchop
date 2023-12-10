@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"errors"
 	"flag"
 	"fmt"
 	"os"
@@ -15,12 +16,16 @@ func check(e error) {
 		panic(e)
 	}
 }
+func printOut(message string, errorMessage string) {
+	fmt.Printf("%s\033[0;0;31m %s\n", message, errorMessage)
+}
+
 func main() {
 	// init flags
 	var input string
 	flag.StringVar(&input, "input", "", "the video file you want to chop")
 	var d float64
-	flag.Float64Var(&d, "dur", 2, "silence duration until notification")
+	flag.Float64Var(&d, "duration", 2, "silence duration until notification")
 	var noise int
 	flag.IntVar(&noise, "noise", -30, "volume threshold for silence in dB")
 	var output string
@@ -32,6 +37,14 @@ func main() {
 	// fmt.Println("duration:", d)
 	// fmt.Println("noise:", noise)
 	// fmt.Println("output:", output)
+	if (input == "") {
+		printOut("", "-input must be a valid file")
+		return
+	}
+	if (output == "") {
+		printOut("", "-output must be a valid file")
+		return
+	}
 	
 	cmd := exec.Command("ffmpeg", "-i", input, "-af", fmt.Sprintf("silencedetect=noise=%ddB:d=%f", noise, d), "-f", "null", "-")
 	cmd.Dir = ""
@@ -44,12 +57,15 @@ func main() {
 	if err != nil {
 		sOut := strings.Split(out.String(), "\n")
 		eMessage := sOut[len(sOut) - 2]
-		// fmt.Printf("\033[0;31m %s\n", eMessage)
-		fmt.Printf("%s\033[0;0;31m %s\n", out.String()[:len(out.String()) - len(eMessage) - 1], eMessage)
+		printOut(out.String()[:len(out.String()) - len(eMessage) - 1], eMessage)
 		return
 	}
 	outStr := out.String()
-	startTimes, endTimes, duration := parseOutput(outStr)
+	startTimes, endTimes, duration, err := parseOutput(outStr)
+	if err != nil {
+		printOut("", err.Error())
+		return
+	}
 	
 	command := constructCmd(&startTimes, &endTimes, duration, input, output)
 
@@ -58,11 +74,14 @@ func main() {
 	chopCmd.Stdout = os.Stderr
 	chopCmd.Stderr = os.Stderr
 	chopErr := chopCmd.Run()
-	check(chopErr)
-
+	if chopErr != nil {
+		printOut("", chopErr.Error())
+		return
+	}
+	printOut("Successfully trimmed video!", "")
 }
 
-func parseOutput(out string) ([]float64, []float64, float64) {
+func parseOutput(out string) ([]float64, []float64, float64, error) {
 	duration := strings.Index(out, "Duration:")
 	durationStr := out[duration:]
 	durTokens := strings.Split(durationStr, " ")
@@ -76,6 +95,9 @@ func parseOutput(out string) ([]float64, []float64, float64) {
 	totalSec := (hs * 3600) + (ms * 60) + ss
 
 	firstSilence := strings.Index(out, "silencedetect")
+	if firstSilence == -1 { // NO SILENCES FOUND
+		return nil, nil, 0, errors.New("No silences found: try changing noise and/or duration values.")
+	}
 	out = out[firstSilence:]
 	tokens := strings.Split(out, " ")
 	startTimes := make([]float64, 0)
@@ -90,7 +112,7 @@ func parseOutput(out string) ([]float64, []float64, float64) {
 			endTimes = append(endTimes, time)
 		}
 	}
-	return startTimes, endTimes, totalSec
+	return startTimes, endTimes, totalSec, nil
 }
 
 func constructCmd(startTimes *[]float64, endTimes *[]float64, duration float64, inFile string, outFile string) []string {
