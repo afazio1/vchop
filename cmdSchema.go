@@ -2,6 +2,16 @@ package main
 
 import "strconv"
 
+type Steps struct {
+	Steps map[Step]TextInputSchema
+}
+type Step string
+const (
+	Input Step = "input"
+	Duration Step = "duration"
+	Noise Step = "noise"
+	Output Step = "output"
+)
 type Validator func(string) (bool, string) // success, msg
 type TextInputSchema struct {
 	header string
@@ -10,7 +20,7 @@ type TextInputSchema struct {
 	validators []Validator
 }
 
-func initialize() *TextInputSchema {
+func initialize() *Steps {
 	validators := make([]Validator, 1)
 	validators[0] = func (input string) (bool, string) {
 		_, err := strconv.Atoi(input)
@@ -19,12 +29,16 @@ func initialize() *TextInputSchema {
 		}
 		return true, "Slay"
 	}
-	test := &TextInputSchema{
-		header: "Enter an input file path:", 
-		placeholder: "./video.mp4",
-		footer: "(press esc to quit)",
-		validators: validators,
+	steps := &Steps{
+		map[Step]TextInputSchema {
+			Input: {
+				header: "Enter an input file path:",
+				placeholder: "./video.mp4",
+				footer: "(press esc to quit)",
+				validators: validators,
+			},
+		},
 	}
-	return test
+	return steps
 }
 

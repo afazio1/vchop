@@ -21,7 +21,7 @@ type inputModel struct {
 func initialModel() inputModel {
 	data := initialize()
 	ti := textinput.New()
-	ti.Placeholder = data.placeholder
+	ti.Placeholder = data.Steps[Input].placeholder
 	ti.Focus()
 	ti.CharLimit = 156
 	ti.Width = 20
@@ -29,8 +29,8 @@ func initialModel() inputModel {
 	return inputModel{
 		textInput: ti,
 		err:       nil,
-		header: data.header,
-		footer: data.footer,
+		header: data.Steps[Input].header,
+		footer: data.Steps[Input].footer,
 	}
 }
 
