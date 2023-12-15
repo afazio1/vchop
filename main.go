@@ -9,18 +9,25 @@ import (
 	"os/exec"
 	"strconv"
 	"strings"
+
+	tea "github.com/charmbracelet/bubbletea"
 )
-func check(e error) {
-	if e != nil {
-		fmt.Println(e.Error())
-		panic(e)
-	}
+
+type SilenceDetectCmd struct {
+	cmd string
 }
 func printOut(message string, errorMessage string) {
 	fmt.Printf("%s\033[0;0;31m %s\n", message, errorMessage)
 }
 
 func main() {
+
+	p := tea.NewProgram(initialModel())
+    if _, err := p.Run(); err != nil {
+        fmt.Printf("Alas, there's been an error: %v", err)
+        os.Exit(1)
+    }
+	return
 	// init flags
 	var input string
 	flag.StringVar(&input, "input", "", "the video file you want to chop")
