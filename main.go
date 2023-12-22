@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/afazio1/vchop/ui"
 	tea "github.com/charmbracelet/bubbletea"
 )
 
@@ -21,12 +22,31 @@ func printOut(message string, errorMessage string) {
 }
 
 func main() {
-
-	p := tea.NewProgram(initialModel())
-    if _, err := p.Run(); err != nil {
-        fmt.Printf("Alas, there's been an error: %v", err)
-        os.Exit(1)
-    }
+	// vchop create
+	if (len(os.Args) > 1 && os.Args[1] == "create") {
+		steps := ui.Initialize()
+		// Input
+		p1 := tea.NewProgram(ui.InitialModel(steps.Steps[ui.Input]))	
+		if _, err := p1.Run(); err != nil {
+			fmt.Printf("Alas, there's been an error: %v", err)
+			os.Exit(1)
+		}
+		// Output
+		p2 := tea.NewProgram(ui.InitialModel(steps.Steps[ui.Output]))
+		if _, err := p2.Run(); err != nil {
+			fmt.Printf("Alas, there's been an error: %v", err)
+			os.Exit(1)
+		}
+		// Noise
+		p3 := tea.NewProgram(ui.InitialModel(steps.Steps[ui.Noise]))
+		if _, err := p3.Run(); err != nil {
+			fmt.Printf("Alas, there's been an error: %v", err)
+			os.Exit(1)
+		}
+	} else {
+		fmt.Printf("MANUAL")
+	}
+	
 	return
 	// init flags
 	var input string

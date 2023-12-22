@@ -1,4 +1,4 @@
-package main
+package ui
 
 import "strconv"
 
@@ -20,7 +20,7 @@ type TextInputSchema struct {
 	validators []Validator
 }
 
-func initialize() *Steps {
+func Initialize() *Steps {
 	validators := make([]Validator, 1)
 	validators[0] = func (input string) (bool, string) {
 		_, err := strconv.Atoi(input)
@@ -34,6 +34,18 @@ func initialize() *Steps {
 			Input: {
 				header: "Enter an input file path:",
 				placeholder: "./video.mp4",
+				footer: "(press esc to quit)",
+				validators: validators,
+			},
+			Output: {
+				header: "Enter an output file path:",
+				placeholder: "./output.mp4",
+				footer: "(press esc to quit)",
+				validators: validators,
+			},
+			Noise: {
+				header: "Enter an noise level for silence:",
+				placeholder: "-30",
 				footer: "(press esc to quit)",
 				validators: validators,
 			},

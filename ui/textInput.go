@@ -1,4 +1,4 @@
-package main
+package ui
 
 import (
 	"fmt"
@@ -18,10 +18,10 @@ type inputModel struct {
 	footer    string
 }
 
-func initialModel() inputModel {
-	data := initialize()
+func InitialModel(step TextInputSchema) inputModel {
+	
 	ti := textinput.New()
-	ti.Placeholder = data.Steps[Input].placeholder
+	ti.Placeholder = step.placeholder
 	ti.Focus()
 	ti.CharLimit = 156
 	ti.Width = 20
@@ -29,8 +29,8 @@ func initialModel() inputModel {
 	return inputModel{
 		textInput: ti,
 		err:       nil,
-		header: data.Steps[Input].header,
-		footer: data.Steps[Input].footer,
+		header: step.header,
+		footer: step.footer,
 	}
 }
 
