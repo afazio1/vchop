@@ -44,8 +44,14 @@ func Initialize() *Steps {
 				validators: validators,
 			},
 			Noise: {
-				header: "Enter an noise level for silence:",
+				header: "Enter an noise level for silence (decibals):",
 				placeholder: "-30",
+				footer: "(press esc to quit)",
+				validators: validators,
+			},
+			Duration:  {
+				header: "Enter an detectable duration for silence (seconds):",
+				placeholder: "2.0",
 				footer: "(press esc to quit)",
 				validators: validators,
 			},
