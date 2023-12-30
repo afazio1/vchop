@@ -58,20 +58,15 @@
   </ol>
 </details>
 
-
-
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
 Removing pauses and silence is a mundane task for any video editor. `vchop` automates this task through an elegant and user-friendly CLI tool. Powered by FFmpeg, Golang, and the terminal UI framework Bubble Tea, `vchop` transforms your video files, leaving them free of unnecessary pauses.
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
 ### Built With
 
 * [![Golang][Golang]][Golang-url]
 * [![FFmpeg][FFmpeg]][FFmpeg-url]
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 
 <!-- GETTING STARTED -->
 ## Getting Started
@@ -87,7 +82,6 @@ To install `vchop` locally, follow these steps.
    ```sh
    go install github.com/afazio1/vchop
    ```
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- USAGE EXAMPLES -->
 ## Usage
@@ -106,7 +100,6 @@ vchop create
 vchop -input=video.mov -output=output.mp4 -noise=-30 -duration=0.5
 ```
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
 <!-- CONTRIBUTING -->
 ## Contributing
 
@@ -121,27 +114,15 @@ Don't forget to give the project a star! Thanks again!
 4. Push to the Branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-
 <!-- LICENSE -->
 ## License
 
-Distributed under the MIT License. See `LICENSE.txt` for more information.
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
+Distributed under the MIT License. See `LICENSE` for more information.
 
 <!-- ACKNOWLEDGMENTS -->
 ## Acknowledgments
 
 * Interactive UI and code structure inspired by [Melkey's Go Blueprint](https://github.com/Melkeydev/go-blueprint)
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 [contributors-shield]: https://img.shields.io/github/contributors/afazio1/vchop.svg?style=for-the-badge
@@ -153,7 +134,7 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 [issues-shield]: https://img.shields.io/github/issues/afazio1/vchop.svg?style=for-the-badge
 [issues-url]: https://github.com/afazio1/vchop/issues
 [license-shield]: https://img.shields.io/github/license/afazio1/vchop.svg?style=for-the-badge
-[license-url]: https://github.com/afazio1/vchop/blob/master/LICENSE.txt
+[license-url]: https://github.com/afazio1/vchop/blob/master/LICENSE
 [product-screenshot]: images/screenshot.png
 [Golang]: https://img.shields.io/badge/Golang-29BEB0?style=for-the-badge&logo=go&logoColor=white
 [Golang-url]: https://go.dev
